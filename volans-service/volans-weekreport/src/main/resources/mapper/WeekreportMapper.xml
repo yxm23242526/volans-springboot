@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.volans.mapper.WeekreportMapper">
+
+    <select id="getExportModelOneList" resultType="com.volans.domain.weekreport.vo.ExportModelOneVO">
+        SELECT project_name, sum(work_time) as work_time from weekreport
+        LEFT JOIN user ON weekreport.user_id = user.user_id
+        LEFT JOIN project ON project.project_id = weekreport.project_id
+        where weekreport.status = 2
+        <if test="userId.length > 0">
+            AND weekreport.user_id IN
+            <foreach collection="userId" item="userId" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+        </if>
+        <if test="projectId.length > 0">
+            AND weekreport.project_id IN
+            <foreach collection="projectId" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+        </if>
+        <if test="date != null">
+            AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
+        </if>
+        group by project_name
+    </select>
+
+    <select id="getExportModelTwoList" resultType="com.volans.domain.weekreport.vo.ExportModelTwoVO">
+        SELECT project_name, date, user_name, work_time, work_content from weekreport
+        LEFT JOIN user ON weekreport.user_id = user.user_id
+        LEFT JOIN project ON project.project_id = weekreport.project_id
+        where weekreport.status = 2
+        <if test="userId.length > 0">
+            AND weekreport.user_id IN
+            <foreach collection="userId" item="userId" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+        </if>
+        <if test="projectId.length > 0">
+            AND weekreport.project_id IN
+            <foreach collection="projectId" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+        </if>
+        <if test="date != null">
+            AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
+        </if>
+        ORDER BY project.project_id DESC,weekreport.date,weekreport.user_id
+    </select>
+
+
+    <select id="getExportModelUserList" resultType="com.volans.domain.weekreport.vo.ExportModelUserVO">
+       SELECT project_name, date , work_time, work_content from weekreport
+       LEFT JOIN project ON project.project_id = weekreport.project_id
+       where weekreport.status = 2
+       <if test="userId != null">
+           AND user_id = #{userId}
+       </if>
+        <if test="taskId != null">
+            AND task_id = #{taskId}
+        </if>
+    </select>
+</mapper>

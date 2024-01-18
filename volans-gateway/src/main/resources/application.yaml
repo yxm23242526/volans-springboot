@@ -1,0 +1,68 @@
+server:
+  port: 10001
+spring:
+  application:
+    name: gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedHeaders: "*"
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTION
+      routes:
+        - id: user
+          uri: lb://weekreport-service
+          predicates:
+          - Path=/user/**
+        - id: department
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/department/**
+        - id: group
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/group/**
+        - id: project
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/project/**
+        - id: weekreport
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/weekreport/**
+        - id: bug
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/bug/**
+        - id: task
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/task/**
+        - id: comment
+          uri: lb://weekreport-service
+          predicates:
+            - Path=/comment/**
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/volans?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&useSSL=false
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+mybatis-plus:
+  # 设置Mapper接口所对应的XML文件位置，如果你在Mapper接口中有自定义方法，需要进行该配置
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
