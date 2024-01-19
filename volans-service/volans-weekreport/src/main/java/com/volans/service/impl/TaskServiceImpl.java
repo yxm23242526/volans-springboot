@@ -28,7 +28,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     private WeekreportService weekreportService;
 
 
-    @Scheduled(cron="0 18 10 * * FRI") // 每周五凌晨4点
+    @Scheduled(cron="0 0 4 * * FRI") // 每周五凌晨4点
     public void addTask()
     {
         System.out.println(new Date() + ":定时任务开始");
