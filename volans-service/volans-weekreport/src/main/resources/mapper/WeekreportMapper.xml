@@ -21,7 +21,7 @@
                 #{projectId}
             </foreach>
         </if>
-        <if test="date != null">
+        <if test="date != null and date.length > 0">
             AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
         </if>
         group by project_name
@@ -44,7 +44,7 @@
                 #{projectId}
             </foreach>
         </if>
-        <if test="date != null">
+        <if test="date != null and date.length > 0">
             AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
         </if>
         ORDER BY project.project_id DESC,weekreport.date,weekreport.user_id
@@ -61,5 +61,6 @@
         <if test="taskId != null">
             AND task_id = #{taskId}
         </if>
+        ORDER BY weekreport.date
     </select>
 </mapper>
