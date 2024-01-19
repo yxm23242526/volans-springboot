@@ -26,5 +26,7 @@ public interface UserService extends IService<User>
 
     public ResponseResult getUserInfo(Integer userId);
 
-    public ResponseResult getAllUserList();
+    public ResponseResult getAllActiveUserList();
+
+    public ResponseResult deleteUser(Integer userId);
 }

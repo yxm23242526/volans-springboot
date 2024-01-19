@@ -59,7 +59,7 @@ public class UserController
      * 更新用户信息
      * @param user
      */
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/updateUser")
     public ResponseResult update(@RequestBody User user)
     {
         return userService.update(user);
@@ -89,9 +89,15 @@ public class UserController
         return userService.getUserInfo(userId);
     }
 
-    @GetMapping(value = "/getAllUserList")
+    @GetMapping(value = "/getAllActiveUserList")
     public ResponseResult getAllUserList()
     {
-        return userService.getAllUserList();
+        return userService.getAllActiveUserList();
+    }
+
+    @DeleteMapping(value = "/deleteUser/{userId}")
+    public ResponseResult deleteUser(@PathVariable("userId") Integer userId)
+    {
+        return userService.deleteUser(userId);
     }
 }

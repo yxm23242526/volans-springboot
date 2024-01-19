@@ -18,7 +18,7 @@ public class TaskController
         return taskService.getById(id);
     }
 
-    @PutMapping(value = "/addTask")
+    @GetMapping(value = "/addTask")
     public void addTask()
     {
         taskService.addTask();

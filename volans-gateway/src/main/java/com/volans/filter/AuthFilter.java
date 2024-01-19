@@ -24,7 +24,7 @@ public class AuthFilter implements GlobalFilter,Ordered
         ServerHttpResponse response = exchange.getResponse();
 
         //2.判断是否是登录
-        if (request.getURI().getPath().contains("/login"))
+        if (request.getURI().getPath().contains("/login") || request.getURI().getPath().contains("/task/addTask"))
         {
             //放行
             return chain.filter(exchange);

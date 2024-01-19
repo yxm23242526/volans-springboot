@@ -28,9 +28,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     private WeekreportService weekreportService;
 
 
-    @Scheduled(cron="0 0 4 * * 6") // 每周五凌晨4点
+    @Scheduled(cron="0 18 10 * * FRI") // 每周五凌晨4点
     public void addTask()
     {
+        System.out.println(new Date() + ":定时任务开始");
+
         List<String> dateList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.setFirstDayOfWeek(Calendar.FRIDAY);  // 设置一周的开始天为周五
@@ -44,6 +46,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             calendar.setTime(startDate);
             calendar.add(Calendar.DAY_OF_WEEK, 1);  // 逐日向后移动日期
             startDate = calendar.getTime();
+        }
+
+        List<Task> list = list();
+        for(Task task : list)
+        {
+            if (task.getStartDate() == dateList.get(0) || task.getEndDate() == dateList.get(dateList.size() - 1))
+            {
+                return;
+            }
         }
 
         Task task = new Task();

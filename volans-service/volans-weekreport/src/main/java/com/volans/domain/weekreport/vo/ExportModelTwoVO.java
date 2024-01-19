@@ -15,15 +15,15 @@ public class ExportModelTwoVO implements Serializable
     @Excel(name = "项目名称", mergeVertical = true, width = 20)
     private String projectName;
 
-    @Excel(name = "日期", type = 10, width = 10)
+    @Excel(name = "日期", type = 10, width = 15)
     private String date;
 
     @Excel(name = "员工", type = 10, width = 10)
     private String userName;
 
-    @Excel(name = "工时", type = 10, width = 15)
-    private String workTime;
-
-    @Excel(name = "工作内容", type = 10, width = 15)
+    @Excel(name = "工作内容", type = 10, width = 50)
     private String workContent;
+
+    @Excel(name = "工时", type = 10, width = 10)
+    private String workTime;
 }

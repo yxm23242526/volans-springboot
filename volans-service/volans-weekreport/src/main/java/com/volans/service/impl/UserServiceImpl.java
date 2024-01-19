@@ -115,13 +115,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         if (ObjectUtils.isEmpty(user.getUserId()))
         {
-            return ResponseResult.errorResult(HttpCodeEnum.DATA_NOT_EXIST);
+            return ResponseResult.errorResult(HttpCodeEnum.PARAM_INVALID);
         }
         if (!lambdaQuery().eq(User::getUserId, user.getUserId()).exists())
         {
             return ResponseResult.errorResult(HttpCodeEnum.DATA_NOT_EXIST);
         }
-        updateById(user);
+        saveOrUpdate(user);
         return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
     }
 
@@ -186,10 +186,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return ResponseResult.okResult(result);
     }
 
-    public ResponseResult getAllUserList()
+    public ResponseResult getAllActiveUserList()
     {
-        List<User> userList = list();
+        List<User> userList = lambdaQuery().eq(User::getStatus, StatusConst.USER_ONJOB).list();
         userList.forEach(user -> user.setPassword(null));
         return ResponseResult.okResult(userList);
+    }
+
+    public ResponseResult deleteUser(Integer userId)
+    {
+        // 1. 校验参数
+        if(userId == null || userId < 0)
+        {
+            return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
+        }
+        // 2.查询要删除的用户是否存在、是否已删除
+        boolean exist = lambdaQuery().eq(User::getUserId, userId).ne(User::getStatus, StatusConst.USER_DESIGNATED).exists();
+        if (exist)
+        {
+            User newUser = new User();
+            newUser.setUserId(userId);
+            newUser.setStatus(StatusConst.USER_DESIGNATED);
+            updateById(newUser);
+        }
+        return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
     }
 }
