@@ -5,6 +5,7 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.volans.domain.common.ResponseResult;
 import com.volans.domain.common.enums.HttpCodeEnum;
+import com.volans.domain.consts.DateConst;
 import com.volans.domain.consts.StatusConst;
 import com.volans.domain.task.pojo.Task;
 import com.volans.domain.weekreport.dto.QueryDTO;
@@ -14,6 +15,7 @@ import com.volans.mapper.TaskMapper;
 import com.volans.mapper.WeekreportMapper;
 import com.volans.service.MinIOService;
 import com.volans.service.WeekreportService;
+import com.volans.utils.DateFormatUtil;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekreport> implements WeekreportService
@@ -204,6 +203,38 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
         List<ExportModelUserVO> exportList = weekreportMapper.getExportModelUserList(userId, taskId);
         if (exportList != null)
         {
+            for (ExportModelUserVO vo : exportList)
+            {
+                Date date = DateFormatUtil.transformStringFormatToDate(vo.getDate());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                int weekDay = calendar.get(Calendar.DAY_OF_WEEK);  // Java的周日是一周的第一天（1），周一为2，以此类推
+                System.out.print(weekDay);
+                switch (weekDay)
+                {
+                    case 1:
+                        vo.setWeek(DateConst.SUNDAY);
+                        break;
+                    case 2:
+                        vo.setWeek(DateConst.MONDAY);
+                        break;
+                    case 3:
+                        vo.setWeek(DateConst.TUESDAY);
+                        break;
+                    case 4:
+                        vo.setWeek(DateConst.WEDNESDAY);
+                        break;
+                    case 5:
+                        vo.setWeek(DateConst.THURSDAY);
+                        break;
+                    case 6:
+                        vo.setWeek(DateConst.FRIDAY);
+                        break;
+                    case 7:
+                        vo.setWeek(DateConst.SATURDAY);
+                        break;
+                }
+            }
             ExportParams exportParams = new ExportParams(null, "周报");
             Workbook sheets = ExcelExportUtil.exportExcel(exportParams, ExportModelUserVO.class, exportList);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

@@ -13,6 +13,9 @@ public class ExportModelUserVO implements Serializable
     @Excel(name = "日期", type = 10, width = 15, mergeVertical = true)
     private String date;
 
+    @Excel(name = "星期", type = 10, width = 10)
+    private String week;
+
     @Excel(name = "项目名称", width = 20)
     private String projectName;
 
