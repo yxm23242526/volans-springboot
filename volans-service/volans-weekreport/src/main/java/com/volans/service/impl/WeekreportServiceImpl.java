@@ -105,12 +105,31 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
         {
             List<ExportModelOneVO> exportList = weekreportMapper.getExportModelOneList(queryDto);
             int count = 1;
+            List<Integer> index = new ArrayList<>();
+            List<ExportModelOneVO> addList = new ArrayList<>();
             for (ExportModelOneVO exportVO : exportList)
             {
                 if (exportVO != null)
                 {
-                    exportVO.setNumber(count++);
+                    if (exportVO != null)
+                    {
+                        // TODO 暂时先这么处理，后面考虑用一个列表或者在数据库增加优先级字段来处理某些项目前置的效果
+                        if (exportVO.getProjectId() != null && exportVO.getProjectId() == 8)
+                        {
+                            index.add(0, count - 1);
+                        }
+                        count++;
+                    }
                 }
+            }
+            for (int i : index)
+            {
+                addList.add(0, exportList.get(i));
+                exportList.remove(i);
+            }
+            if (!addList.isEmpty())
+            {
+                exportList.addAll(0, addList);
             }
             if (isExport)
             {
@@ -130,12 +149,28 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
         {
             List<ExportModelTwoVO> exportList = weekreportMapper.getExportModelTwoList(queryDto);
             int count = 1;
+            List<Integer> index = new ArrayList<>();
+            List<ExportModelTwoVO> addList = new ArrayList<>();
             for (ExportModelTwoVO exportVO : exportList)
             {
                 if (exportVO != null)
                 {
-                    exportVO.setNumber(count++);
+                    // TODO 暂时先这么处理，后面考虑用一个列表或者在数据库增加优先级字段来处理某些项目前置的效果
+                    if (exportVO.getProjectId() != null && exportVO.getProjectId() == 8)
+                    {
+                        index.add(0, count - 1);
+                    }
+                    count++;
                 }
+            }
+            for (int i : index)
+            {
+                addList.add(0, exportList.get(i));
+                exportList.remove(i);
+            }
+            if (!addList.isEmpty())
+            {
+                exportList.addAll(0, addList);
             }
             if (isExport)
             {
