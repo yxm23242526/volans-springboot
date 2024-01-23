@@ -24,7 +24,7 @@ public class Weekreport implements Serializable
     private String date;
 
     // 工时
-    private Integer workTime;
+    private String workTime;
 
     // 工作内容
     private String workContent;

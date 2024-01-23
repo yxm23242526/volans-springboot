@@ -122,7 +122,7 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
                 outputStream.flush();
                 byte[] content = outputStream.toByteArray();
                 InputStream is = new ByteArrayInputStream(content);
-                String url = minioService.uploadExcelFile(String.valueOf(userId), queryDto.getDate() == null ? "周报.xlsx" : queryDto.getDate()[0] + "_" + queryDto.getDate()[1] + ".xlsx", is);
+                String url = minioService.uploadExcelFile(String.valueOf(userId), queryDto.getStartDate() == null && queryDto.getEndDate() == null ? "周报.xlsx" : queryDto.getStartDate() + "_" + queryDto.getEndDate() + ".xlsx", is);
                 return ResponseResult.okResult(url);
             }
             return ResponseResult.okResult(exportList);
@@ -147,7 +147,7 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
                 outputStream.flush();
                 byte[] content = outputStream.toByteArray();
                 InputStream is = new ByteArrayInputStream(content);
-                String url = minioService.uploadExcelFile(String.valueOf(userId) + "/report", queryDto.getDate() == null ? "周报.xlsx" : queryDto.getDate()[0] + "_" + queryDto.getDate()[1] + ".xlsx", is);
+                String url = minioService.uploadExcelFile(String.valueOf(userId) + "/report", queryDto.getStartDate() == null && queryDto.getEndDate() == null ? "周报.xlsx" : queryDto.getStartDate() + "_" + queryDto.getEndDate() + ".xlsx", is);
                 return ResponseResult.okResult(url);
             }
             return ResponseResult.okResult(exportList);

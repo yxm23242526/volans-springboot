@@ -41,7 +41,7 @@ public class UserController
     @PostMapping(value = "/addUser")
     public ResponseResult addUser(@RequestBody User user)
     {
-        return ResponseResult.okResult(userService.save(user));
+        return ResponseResult.okResult(userService.addUser(user));
     }
 
     /**
@@ -62,7 +62,7 @@ public class UserController
     @PostMapping(value = "/updateUser")
     public ResponseResult update(@RequestBody User user)
     {
-        return userService.update(user);
+        return userService.updateUser(user);
     }
 
     @GetMapping(value = "/getAllUserIdList")

@@ -13,15 +13,22 @@ public enum HttpCodeEnum
     TOKEN_EXPIRE(51, "TOKEN已过期"),
 
     TOKEN_MISSING(52, "TOKEN丢失"),
-    // 参数错误 500~1000
-    PARAM_REQUIRE(500, "参数丢失"),
-    PARAM_INVALID(501, "参数无效"),
-    SERVER_ERROR(503, "服务器内部错误"),
-    // 数据错误 1000~2000
-    DATA_EXIST(1000, "数据已经存在"),
-    DATA_NOT_EXIST(1001, "数据不存在"),
-    // 权限错误 3000~3500
-    NO_AUTH(3000, "权限不足");
+    // 请求数据错误 1000~2000
+    PARAM_REQUIRE(1000, "参数丢失"),
+    PARAM_INVALID(1001, "参数无效"),
+    SERVER_ERROR(1002, "服务器内部错误"),
+
+    // 服务器数据错误 2000~10000
+    // 增加操作错误 2000~3000
+    DATA_EXIST(2000, "数据已经存在"),
+    DATA_NOT_EXIST(2001, "数据不存在"),
+    // 修改操作错误 3000~4000
+
+    // 删除操作错误 4000~5000
+    DATA_HAS_RELATION(4000, "存在关联数据，无法删除"),
+
+    // 权限错误 10000~12000
+    NO_AUTH(10000, "权限不足");
 
     int code;
     String Message;

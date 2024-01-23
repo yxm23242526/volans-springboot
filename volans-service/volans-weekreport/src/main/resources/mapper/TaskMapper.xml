@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.volans.mapper.TaskMapper">
+
+    <select id="selectTaskInfo" resultType="com.volans.domain.task.vo.TaskInfoVO">
+        SELECT
+            task.task_id,
+            task.start_date,
+            task.end_date,
+            COUNT(DISTINCT CASE WHEN weekreport.status != 2 THEN weekreport.user_id END) AS unSubmitUserCount,
+            GROUP_CONCAT(DISTINCT CASE WHEN weekreport.status != 2 THEN user.user_name ELSE NULL END SEPARATOR ', ') AS unSubmitUserName
+        FROM
+            task task
+                LEFT JOIN
+            (
+                SELECT DISTINCT task_id, user_id, status FROM weekreport
+            ) weekreport ON task.task_id = weekreport.task_id
+                JOIN
+            user ON weekreport.user_id = user.user_id
+        GROUP BY
+            task.task_id, task.start_date, task.end_date;
+    </select>
+</mapper>

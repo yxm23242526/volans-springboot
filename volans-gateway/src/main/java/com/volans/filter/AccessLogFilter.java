@@ -147,7 +147,10 @@ public class AccessLogFilter implements GlobalFilter, Ordered
                             DataBufferUtils.release(join);
                             ResponseResult result = JacksonUtils.toObj(content, ResponseResult.class);
                             gatewayLog.setResponseCode(result.getCode());
-                            gatewayLog.setResponseData(result.getData().toString());
+                            if (result.getData() != null)
+                            {
+                                gatewayLog.setResponseData(result.getData().toString());
+                            }
                             accessLogService.updateById(gatewayLog);
                             return bufferFactory.wrap(content);
                         }));

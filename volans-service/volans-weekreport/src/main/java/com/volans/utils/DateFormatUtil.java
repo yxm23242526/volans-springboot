@@ -1,7 +1,12 @@
 package com.volans.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.time.ZoneId;
 
 public class DateFormatUtil
 {
@@ -22,6 +27,19 @@ public class DateFormatUtil
         catch (Exception e)
         {
             return date;
+        }
+    }
+
+    public static Date transformStringFormatToDate(String date)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try
+        {
+            return dateFormat.parse(date);
+        }
+        catch (Exception e)
+        {
+            return null;
         }
     }
 }

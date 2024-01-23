@@ -18,7 +18,7 @@ public interface UserService extends IService<User>
 
     public PageResponseResult getUserList(QueryDTO queryDto);
 
-    public ResponseResult update(User user);
+    public ResponseResult updateUser(User user);
 
     public ResponseResult addUser(User user);
 

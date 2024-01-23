@@ -107,7 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public ResponseResult update(User user)
+    public ResponseResult updateUser(User user)
     {
         if (user == null)
         {
@@ -121,7 +121,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         {
             return ResponseResult.errorResult(HttpCodeEnum.DATA_NOT_EXIST);
         }
-        saveOrUpdate(user);
+        updateById(user);
         return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
     }
 
@@ -134,9 +134,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return ResponseResult.errorResult(HttpCodeEnum.PARAM_REQUIRE);
         }
         // 2.当前用户是否已存在
-        if (getById(user.getUserId()) != null)
+         if (getById(user.getUserId()) != null)
         {
-            return ResponseResult.errorResult(HttpCodeEnum.DATA_EXIST);
+            return ResponseResult.errorResult(HttpCodeEnum.PARAM_REQUIRE);
         }
         // 3.将当前用户存入数据库
         // 3.1 加密密码，初始密码为工号
@@ -168,7 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String url = minioService.uploadImgFile(String.valueOf(userId) + "/image", filename, file.getInputStream());
         System.out.println(url);
         user.setImage(url);
-        update(user);
+        updateUser(user);
 
         return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
     }

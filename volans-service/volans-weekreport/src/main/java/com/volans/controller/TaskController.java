@@ -1,5 +1,7 @@
 package com.volans.controller;
 
+import com.volans.domain.common.ResponseResult;
+import com.volans.domain.common.enums.HttpCodeEnum;
 import com.volans.domain.task.pojo.Task;
 import com.volans.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,33 @@ public class TaskController
         return taskService.getById(id);
     }
 
-    @GetMapping(value = "/addTask")
+    @PostMapping(value = "/addTask2")
     public void addTask()
     {
         taskService.addTask();
+    }
+
+    @PostMapping(value = "/addTask")
+    public ResponseResult addTask(@RequestBody Task task)
+    {
+        return taskService.addTask(task);
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseResult getTaskList()
+    {
+        return taskService.getTaskListInfo();
+    }
+
+    @PostMapping(value = "/editTask")
+    public ResponseResult editTask(@RequestBody Task task)
+    {
+        return taskService.editTask(task);
+    }
+
+    @DeleteMapping(value = "/deleteTask/{taskId}")
+    public ResponseResult deleteTask(@PathVariable("taskId") Integer taskId)
+    {
+        return taskService.deleteTask(taskId);
     }
 }
