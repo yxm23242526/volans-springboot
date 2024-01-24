@@ -20,6 +20,8 @@
                 JOIN
             user ON weekreport.user_id = user.user_id
         GROUP BY
-            task.task_id, task.start_date, task.end_date;
+            task.task_id, task.start_date, task.end_date
+        ORDER BY
+            task.start_date DESC
     </select>
 </mapper>
