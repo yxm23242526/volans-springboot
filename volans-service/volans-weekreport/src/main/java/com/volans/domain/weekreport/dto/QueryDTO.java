@@ -12,6 +12,5 @@ public class QueryDTO implements Serializable
     private Integer model;
     private Integer[] userId;
     private Integer[] projectId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate[] date;
 }

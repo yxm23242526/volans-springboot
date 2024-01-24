@@ -21,11 +21,8 @@
                 #{projectId}
             </foreach>
         </if>
-        <if test="startDate != null">
-            AND weekreport.date  <![CDATA[ > ]]> #{startDate}
-        </if>
-        <if test="endDate != null">
-            AND weekreport.date  <![CDATA[ < ]]> #{endDate}
+        <if test="date != null and date.length > 0">
+            AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
         </if>
         group by project_name, weekreport.project_id
     </select>
@@ -47,11 +44,8 @@
                 #{projectId}
             </foreach>
         </if>
-        <if test="startDate != null">
-            AND weekreport.date  <![CDATA[ > ]]> #{startDate}
-        </if>
-        <if test="endDate != null">
-            AND weekreport.date  <![CDATA[ < ]]> #{endDate}
+        <if test="date != null and date.length > 0">
+            AND weekreport.date BETWEEN '${date[0]}' AND '${date[1]}'
         </if>
         ORDER BY project.project_id DESC,weekreport.date,weekreport.user_id
     </select>
