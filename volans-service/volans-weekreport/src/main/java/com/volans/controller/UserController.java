@@ -45,24 +45,34 @@ public class UserController
     }
 
     /**
-     * 获取用户列表，没有参数时为全查询，有参数时为条件查询
-     * @param queryDto 查询条件
-     * @return 用户列表
-     */
-    @GetMapping(value = "/getUserList")
-    public PageResponseResult getUserList(QueryDTO queryDto)
-    {
-        return userService.getUserList(queryDto);
-    }
-
-    /**
-     * 更新用户信息
-     * @param user
+     * 修改用户信息
+     * @param user 用户信息
      */
     @PostMapping(value = "/updateUser")
     public ResponseResult update(@RequestBody User user)
     {
         return userService.updateUser(user);
+    }
+
+    /**
+     * 删除用户
+     * @param userId 用户id
+     */
+    @DeleteMapping(value = "/deleteUser/{userId}")
+    public ResponseResult deleteUser(@PathVariable("userId") Integer userId)
+    {
+        return userService.deleteUser(userId);
+    }
+
+    /**
+     * 获取用户列表，没有参数时为全查询，有参数时为条件查询
+     * @param queryDto 查询条件
+     * @return 用户列表
+     */
+    @GetMapping(value = "/getUserList")
+    public ResponseResult getUserList(QueryDTO queryDto)
+    {
+        return userService.getUserList(queryDto);
     }
 
     @GetMapping(value = "/getAllUserIdList")
@@ -95,9 +105,5 @@ public class UserController
         return userService.getAllActiveUserList();
     }
 
-    @DeleteMapping(value = "/deleteUser/{userId}")
-    public ResponseResult deleteUser(@PathVariable("userId") Integer userId)
-    {
-        return userService.deleteUser(userId);
-    }
+
 }

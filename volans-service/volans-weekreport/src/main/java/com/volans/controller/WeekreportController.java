@@ -1,6 +1,7 @@
 package com.volans.controller;
 
 import com.volans.domain.common.ResponseResult;
+import com.volans.domain.task.dto.SpecifiedReportsDTO;
 import com.volans.domain.weekreport.dto.QueryDTO;
 import com.volans.domain.weekreport.pojo.Weekreport;
 import com.volans.service.WeekreportService;
@@ -30,15 +31,15 @@ public class WeekreportController
     }
 
     @PostMapping(value = "/submit")
-    public ResponseResult submitWeekreport(@RequestHeader("userId") Integer userId, @RequestBody List<Weekreport> list)
+    public ResponseResult submitWeekreport(@RequestHeader("userId") Integer managerUserId, @RequestBody List<Weekreport> list, @PathVariable("userId") Integer userId)
     {
-        return weekreportService.submitWeekreport(userId, list);
+        return weekreportService.submitWeekreport(managerUserId, list, userId);
     }
 
-    @PostMapping(value = "/revokeWeekreport/{taskId}")
-    public ResponseResult revokeWeekreport(@RequestHeader("userId") Integer userId, @PathVariable("taskId") Integer taskId)
+    @PostMapping(value = "/revokeWeekreport/{taskId}/{userId}")
+    public ResponseResult revokeWeekreport(@RequestHeader("userId") Integer managerUserId, @PathVariable("taskId") Integer taskId, @PathVariable("userId") Integer userId)
     {
-        return weekreportService.revokeWeekreport(userId, taskId);
+        return weekreportService.revokeWeekreport(managerUserId, taskId, userId);
     }
 
     @PostMapping (value = "/export/query")
@@ -69,5 +70,11 @@ public class WeekreportController
     public ResponseResult createNewWeekreportForTask(@RequestBody List<Weekreport> list)
     {
         return weekreportService.createNewWeekreportForTask(list);
+    }
+
+    @PostMapping(value = "/getSpecifiedReports")
+    public ResponseResult getSpecifiedReports(@RequestBody SpecifiedReportsDTO dto)
+    {
+        return weekreportService.getSpecifiedReports(dto);
     }
 }

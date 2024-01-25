@@ -2,16 +2,20 @@ package com.volans.service.impl;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.volans.domain.common.ResponseResult;
 import com.volans.domain.common.enums.HttpCodeEnum;
 import com.volans.domain.consts.DateConst;
+import com.volans.domain.consts.IdentityConst;
 import com.volans.domain.consts.StatusConst;
+import com.volans.domain.task.dto.SpecifiedReportsDTO;
 import com.volans.domain.task.pojo.Task;
 import com.volans.domain.weekreport.dto.QueryDTO;
 import com.volans.domain.weekreport.pojo.Weekreport;
 import com.volans.domain.weekreport.vo.*;
 import com.volans.mapper.TaskMapper;
+import com.volans.mapper.UserMapper;
 import com.volans.mapper.WeekreportMapper;
 import com.volans.service.MinIOService;
 import com.volans.service.WeekreportService;
@@ -38,6 +42,9 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
 
     @Autowired
     private TaskMapper taskMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public ResponseResult getMyWeekreport(Integer userId)
@@ -91,7 +98,6 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
                     myWeekreportVo.setStatus(weekreportList.get(0).getStatus());
                     rows.add(weekreportsVo);
                 }
-
             }
             myWeekreportVo.setRows(rows);
             result.add(myWeekreportVo);
@@ -189,12 +195,24 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
     }
 
     @Override
-    public ResponseResult submitWeekreport(Integer userId, List<Weekreport> list)
+    public ResponseResult submitWeekreport(Integer managerUserId, List<Weekreport> list, Integer userId)
     {
         // 1. 校验参数
         if (list == null)
         {
             return ResponseResult.errorResult(HttpCodeEnum.PARAM_INVALID);
+        }
+        if (userId == -1)
+        {
+            userId = managerUserId;
+        }
+        else
+        {
+            Integer identityId = userMapper.selectById(managerUserId).getIdentityId();
+            if (identityId < IdentityConst.TEAM_LEADER)
+            {
+                return ResponseResult.errorResult(HttpCodeEnum.NO_AUTH);
+            }
         }
         // 2. 处理数据
         Integer taskId = list.get(0).getTaskId();
@@ -219,8 +237,20 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
     }
 
     @Override
-    public ResponseResult revokeWeekreport(Integer userId, Integer taskId)
+    public ResponseResult revokeWeekreport(Integer managerUserId, Integer taskId, Integer userId)
     {
+        if (userId == -1)
+        {
+            userId = managerUserId;
+        }
+        else
+        {
+            Integer identityId = userMapper.selectById(managerUserId).getIdentityId();
+            if (identityId < IdentityConst.TEAM_LEADER)
+            {
+                return ResponseResult.errorResult(HttpCodeEnum.NO_AUTH);
+            }
+        }
         lambdaUpdate().eq(Weekreport::getUserId, userId)
                 .eq(Weekreport::getTaskId, taskId)
                 .update(new Weekreport(userId, taskId, StatusConst.WEEKREPORT_REVOKE));
@@ -296,5 +326,76 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
             return ResponseResult.okResult(HttpCodeEnum.SUCCESS);
         }
         return ResponseResult.errorResult(HttpCodeEnum.PARAM_REQUIRE);
+    }
+
+    public ResponseResult getSpecifiedReports(SpecifiedReportsDTO dto)
+    {
+        // 1. 参数校验
+        if (dto == null || dto.getUsers() == null || dto.getTasks() == null)
+        {
+            return ResponseResult.errorResult(HttpCodeEnum.PARAM_REQUIRE);
+        }
+        if (dto.getTasks().length == 0)
+        {
+            dto.setTasks(taskMapper.getAllTaskIdList().toArray(new Integer[0]));
+        }
+        if (dto.getUsers().length == 0)
+        {
+            dto.setUsers(userMapper.getActiveUserIdList().toArray(new Integer[0]));
+        }
+
+        // 2. 查询数据
+        List<MyWeekreportVO> result = new ArrayList<>();
+        Map<Integer, Map<String, List<Weekreport>>> dateTaskMap = new LinkedHashMap<>();
+        for (Integer userId : dto.getUsers())
+        {
+            for (Integer taskId : dto.getTasks())
+            {
+                List<String> dateList = weekreportMapper.getDateListByUserIdAndTaskId(userId, taskId);
+                for (String date : dateList)
+                {
+                    List<Weekreport> weekreportList = weekreportMapper.getWeekreportListByUserIdAndTaskIdAndDate(userId, taskId, date);
+                    if (!dateTaskMap.containsKey(taskId))
+                    {
+                        dateTaskMap.put(taskId, new LinkedHashMap<>());
+                    }
+                    if (!dateTaskMap.get(taskId).containsKey(date))
+                    {
+                        dateTaskMap.get(taskId).put(date, weekreportList);
+                    }
+                }
+            }
+        }
+
+        for (Integer userId : dto.getUsers())
+        {
+            for (Integer taskId : dto.getTasks())
+            {
+                MyWeekreportVO myWeekreportVo = new MyWeekreportVO();
+                myWeekreportVo.setUserId(userId);
+                myWeekreportVo.setTaskId(taskId);
+                Task task = taskMapper.selectById(taskId);
+                myWeekreportVo.setStartDate(task.getStartDate());
+                myWeekreportVo.setEndDate(task.getEndDate());
+
+                List<WeekreportsVO> rows = new ArrayList<>();
+                Map<String, List<Weekreport>> dateTaskReportsMap = dateTaskMap.get(taskId);
+                for (String date : dateTaskReportsMap.keySet())
+                {
+                    List<Weekreport> weekreportList = dateTaskReportsMap.get(date);
+                    WeekreportsVO weekreportsVo = new WeekreportsVO();
+                    weekreportsVo.setCurDate(date);
+                    weekreportsVo.setContent(weekreportList);
+                    if (!weekreportList.isEmpty())
+                    {
+                        myWeekreportVo.setStatus(weekreportList.get(0).getStatus());
+                        rows.add(weekreportsVo);
+                    }
+                }
+                myWeekreportVo.setRows(rows);
+                result.add(myWeekreportVo);
+            }
+        }
+        return ResponseResult.okResult(result);
     }
 }
