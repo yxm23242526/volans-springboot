@@ -68,7 +68,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         task.setEndDate(dateList.get(dateList.size() - 1));
         save(task);
 
-        List<Integer> userIds = UserMapper.getActiveUserIdList();
+        List<Integer> userIds = UserMapper.getActiveUserIdList().stream().filter(id -> id != 312).toList();
 
         List<Weekreport> weekreportList = new ArrayList<>();
         for(int id : userIds)
@@ -119,7 +119,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
         save(task);
 
-        List<Integer> userIds = UserMapper.getActiveUserIdList();
+        List<Integer> userIds = UserMapper.getActiveUserIdList().stream().filter(id -> id != 312).toList();
 
         List<Weekreport> weekreportList = new ArrayList<>();
         for(int id : userIds)
