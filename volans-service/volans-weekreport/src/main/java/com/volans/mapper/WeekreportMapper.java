@@ -25,7 +25,7 @@ public interface WeekreportMapper extends BaseMapper<Weekreport>
     public List<String> getDateListByUserIdAndTaskId(@Param("userId") Integer userId, @Param("taskId")Integer taskId);
 
     @Select("SELECT * FROM weekreport WHERE user_id = #{userId} AND task_id = #{taskId} AND date = #{date}")
-    public List<Weekreport> getWeekreportListByUserIdAndTaskIdAndDate(@Param("userId")Integer userId, @Param("taskId")Integer taskId, @Param("date")String date);
+    public List<Weekreport>  getWeekreportListByUserIdAndTaskIdAndDate(@Param("userId")Integer userId, @Param("taskId")Integer taskId, @Param("date")String date);
 
     public List<ExportModelOneVO> getExportModelOneList(QueryDTO queryDto);
 

@@ -331,25 +331,25 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
     public ResponseResult getSpecifiedReports(SpecifiedReportsDTO dto)
     {
         // 1. 参数校验
-        if (dto == null || dto.getUsers() == null || dto.getTasks() == null)
+        if (dto == null || dto.getUserId() == null || dto.getTaskId() == null)
         {
             return ResponseResult.errorResult(HttpCodeEnum.PARAM_REQUIRE);
         }
-        if (dto.getTasks().length == 0)
+        if (dto.getTaskId().length == 0)
         {
-            dto.setTasks(taskMapper.getAllTaskIdList().toArray(new Integer[0]));
+            dto.setTaskId(taskMapper.getAllTaskIdList().toArray(new Integer[0]));
         }
-        if (dto.getUsers().length == 0)
+        if (dto.getUserId().length == 0)
         {
-            dto.setUsers(userMapper.getActiveUserIdList().toArray(new Integer[0]));
+            dto.setUserId(userMapper.getActiveUserIdList().toArray(new Integer[0]));
         }
 
         // 2. 查询数据
         List<MyWeekreportVO> result = new ArrayList<>();
         Map<Integer, Map<String, List<Weekreport>>> dateTaskMap = new LinkedHashMap<>();
-        for (Integer userId : dto.getUsers())
+        for (Integer userId : dto.getUserId())
         {
-            for (Integer taskId : dto.getTasks())
+            for (Integer taskId : dto.getTaskId())
             {
                 List<String> dateList = weekreportMapper.getDateListByUserIdAndTaskId(userId, taskId);
                 for (String date : dateList)
@@ -367,9 +367,9 @@ public class WeekreportServiceImpl extends ServiceImpl<WeekreportMapper, Weekrep
             }
         }
 
-        for (Integer userId : dto.getUsers())
+        for (Integer userId : dto.getUserId())
         {
-            for (Integer taskId : dto.getTasks())
+            for (Integer taskId : dto.getTaskId())
             {
                 MyWeekreportVO myWeekreportVo = new MyWeekreportVO();
                 myWeekreportVo.setUserId(userId);

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class SpecifiedReportsDTO
 {
-    private Integer[] users;
-    private Integer[] tasks;
+    private Integer[] userId;
+    private Integer[] taskId;
 }

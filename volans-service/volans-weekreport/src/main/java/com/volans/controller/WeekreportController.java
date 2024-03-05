@@ -30,7 +30,7 @@ public class WeekreportController
         return weekreportService.getMyWeekreport(userId);
     }
 
-    @PostMapping(value = "/submit")
+    @PostMapping(value = "/submit/{userId}")
     public ResponseResult submitWeekreport(@RequestHeader("userId") Integer managerUserId, @RequestBody List<Weekreport> list, @PathVariable("userId") Integer userId)
     {
         return weekreportService.submitWeekreport(managerUserId, list, userId);
